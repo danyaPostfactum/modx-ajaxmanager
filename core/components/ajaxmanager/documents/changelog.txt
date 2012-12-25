@@ -1,0 +1,5 @@
+Changelog for AjaxManager extra.
+
+AjaxManager 1.0.0
+====================================
+- Initial commit
