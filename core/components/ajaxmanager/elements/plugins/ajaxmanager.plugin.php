@@ -13,25 +13,26 @@ $managerUrl = $modx->getOption('manager_url', null, MODX_MANAGER_URL);
 
 $controller =& $scriptProperties['controller'];
 
-$isXHR = isset($_SERVER['HTTP_X_REQUESTED_WITH']) && $_SERVER['HTTP_X_REQUESTED_WITH'] == 'XMLHttpRequest';
-
 switch ($modx->event->name)
 {
     case 'OnManagerPageBeforeRender':
-        $controller->addJavascript($managerUrl. 'components/ajaxmanager/assets/ajaxmanager.js');
         
-        if ($isXHR) {
+        if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && $_SERVER['HTTP_X_REQUESTED_WITH'] == 'XMLHttpRequest' && $controller->loadHeader) {
             $action = $modx->actionMap[ (integer) $modx->request->action ];
             $namespaces = explode(',', $modx->getOption('ajaxmanager.compatible_namespaces', null, 'core'));
             if (!in_array($action['namespace'], $namespaces)) {
                 die();
             }
-            $controller->loadFooter = false;
             $controller->loadHeader = false;
+            $controller->loadFooter = false;
+            $controller->packToJSON = true;
+        } else {
+            $controller->addJavaScript($managerUrl. 'components/ajaxmanager/assets/ajaxmanager.js');
+            $controller->packToJSON = false;
         }
         break;
     case 'OnManagerPageAfterRender':
-        if ($isXHR) {
+        if ($controller->packToJSON) {
 
             $content = $controller->content;
             $title = $controller->getPageTitle();
