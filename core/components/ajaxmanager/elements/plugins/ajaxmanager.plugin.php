@@ -27,7 +27,7 @@ switch ($modx->event->name)
             $controller->loadFooter = false;
             $controller->packToJSON = true;
         } else {
-            $controller->addJavaScript($managerUrl. 'components/ajaxmanager/assets/ajaxmanager.js');
+            $controller->addJavaScript($managerUrl. 'assets/components/ajaxmanager/ajaxmanager.js');
             $controller->packToJSON = false;
         }
         break;
