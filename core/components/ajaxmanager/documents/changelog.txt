@@ -1,5 +1,10 @@
 Changelog for AjaxManager extra.
 
+AjaxManager 1.1.0
+====================================
+- Added Manager patch into package
+- Fixed tv issues (empty tv list and input properties)
+
 AjaxManager 1.0.0
 ====================================
 - Initial commit

@@ -1,8 +1,9 @@
 --------------------
 Extra: AjaxManager
 --------------------
-Version: 1.0.0
-Created: December 10th, 2012
+Version: 1.1.0
+Created: December 25th, 2012
+Since: December 10th, 2012
 Author: Danil Kostin <danya.postfactum@gmail.com>
 License: GNU GPLv2 (or later at your option)
 
