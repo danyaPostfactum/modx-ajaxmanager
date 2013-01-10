@@ -212,7 +212,7 @@ MODx.LayoutMgr = function() {
             return false;
         }
         ,loadPage: function(url) {
-            if (typeof url == "number")
+            if (!isNaN(url))
                 this.loadAction.apply(this, arguments);
             else
                 location.href = url;
