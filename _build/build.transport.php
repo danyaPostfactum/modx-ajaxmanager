@@ -1,20 +1,19 @@
 <?php
 /**
- * Ace build script
+ * AjaxManager build script
  *
- * @package ace
+ * @package ajaxmanager
  * @subpackage build
  */
  
-$tstart = explode(' ', microtime());
-$tstart = $tstart[1] + $tstart[0];
+$tstart = microtime(true);
 set_time_limit(0);
  
 /* define version */
 define('PKG_NAME','AjaxManager');
 define('PKG_NAMESPACE','ajaxmanager');
-define('PKG_VERSION','1.1.0');
-define('PKG_RELEASE','rc-1');
+define('PKG_VERSION','1.1.1');
+define('PKG_RELEASE','rc-2');
  
 /* define sources */
 $root = dirname(dirname(__FILE__)).'/';
@@ -22,6 +21,7 @@ $sources = array(
     'root' => $root,
     'build' => $root . '_build/',
     'data' => $root . '_build/data/',
+    'resolvers' => $root . '_build/resolvers/',
     'lexicon' => $root . 'core/components/'.PKG_NAMESPACE.'/lexicon/',
     'documents' => $root.'core/components/'.PKG_NAMESPACE.'/documents/',
     'elements' => $root.'core/components/'.PKG_NAMESPACE.'/elements/',
@@ -75,6 +75,7 @@ $attributes= array(
     xPDOTransport::PRESERVE_KEYS => false,
     xPDOTransport::UPDATE_OBJECT => true,
     xPDOTransport::RELATED_OBJECTS => true,
+    xPDOTransport::ABORT_INSTALL_ON_VEHICLE_FAIL => true,
     xPDOTransport::RELATED_OBJECT_ATTRIBUTES => array (
         'PluginEvents' => array(
             xPDOTransport::PRESERVE_KEYS => true,
@@ -86,6 +87,11 @@ $attributes= array(
 $vehicle = $builder->createVehicle($plugin, $attributes);
 
 $modx->log(modX::LOG_LEVEL_INFO,'Adding file resolvers to plugin...');
+$vehicle->validate('php',array(
+    'source' => $sources['build'].'validator.php',
+    'name' => 'validator',
+    'type' => 'php'
+));
 $vehicle->resolve('file',array(
     'source' => $sources['source_manager_assets'],
     'target' => "return MODX_MANAGER_PATH . 'assets/components/';",
@@ -140,8 +146,7 @@ $builder->setPackageAttributes(array(
 $modx->log(modX::LOG_LEVEL_INFO,'Packing up transport package zip...');
 $builder->pack();
  
-$tend= explode(" ", microtime());
-$tend= $tend[1] + $tend[0];
-$totalTime= sprintf("%2.4f s",($tend - $tstart));
+$tend= microtime(true);
+$totalTime= sprintf("%2.4f s", ($tend - $tstart));
 $modx->log(modX::LOG_LEVEL_INFO,"\n<br />Package Built.<br />\nExecution time: {$totalTime}\n");
 exit ();
