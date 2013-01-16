@@ -16,13 +16,14 @@ Object.defineProperty(Array.prototype, "remove", {
 
 Ext.onReady(function(){
 
+	var panel = Ext.getCmp('modx-content');
+	var mask = new Ext.LoadMask(panel.el);
+
 	var loadPage = function(url){
 
+		Ext.Ajax.abort();
 		MODx.request = MODx.getURLParameters();
-		var panel = Ext.getCmp('modx-content');
-		if (!panel._mask)
-			panel._mask = new Ext.LoadMask(Ext.get('modx-content'));
-		panel._mask.show();
+		mask.show();
 
 		var loadedScripts 		= [];
 		var loadedStyleSheets	= [];
@@ -79,12 +80,9 @@ Ext.onReady(function(){
 					return false;
 				}
 
-				var component = JSON.parse(response.responseText);
-				//console.log(component);
-
-				document.title = component.title;
-
 				try{
+					var component = JSON.parse(response.responseText);
+					document.title = component.title;
 					panel.removeAll();
 				} catch (e) {
 					console.log && console.log(e);
@@ -97,7 +95,20 @@ Ext.onReady(function(){
 				var scriptsToLoad = {};
 
 				var init = function(){
-					Ext.get(Ext.get('modx-panel-holder').dom.nextElementSibling).update(component.content, true);
+					var panelChildren = panel.el.dom.children;
+					var i = panelChildren.length;
+					while (i--) {
+						if (panelChildren[i] !== panel.bwrap.dom) {
+							panelChildren[i].parentNode.removeChild(panelChildren[i]);
+						}
+					}
+
+					panel.el.dom.insertAdjacentHTML('afterbegin', component.content);
+
+					Array.prototype.forEach.call(panel.el.dom.getElementsByTagName('script'), function(script){
+						component.embedded.scripts.push(script.innerHTML);
+						script.parentNode.removeChild(script);
+					});
 
 					component.embedded.scripts.forEach(function(content){
 						var script = document.createElement('script');
@@ -136,26 +147,26 @@ Ext.onReady(function(){
 				if (Object.keys(scriptsToLoad).length == 0)
 					init();
 
-				panel._mask.hide();
+				mask.hide();
 
-
-		    },
-		    failure: function(response, opts) {
+			},
+			failure: function(response, opts) {
 				console.log('server-side failure with status code ' + response.status);
-		    }
+				location.href = url;
+			}
 		});
 	};
 
 	MODx.loadAction = function(a,p){
-            var url = '?a='+a+'&'+(p || '');
+			var url = '?a='+a+'&'+(p || '');
 			history.pushState({}, "", url);
 			loadPage(url);
 	}
 
 	MODx.loadPage = function(url){
-	    if (typeof url == "number")
-	        this.loadAction.apply(this, arguments);
-	    else {
+		if (!isNaN(url))
+			this.loadAction.apply(this, arguments);
+		else {
 			history.pushState({}, "", url);
 			loadPage(url);
 		}
@@ -173,10 +184,7 @@ Ext.onReady(function(){
 		if (target.nodeName == 'SPAN')
 			target = target.parentNode;
 
-		if (target.nodeName !== 'A')
-			return;
-
-		if (target.href.indexOf('http://') !== 0)
+		if (target.nodeName !== 'A' || target.href.indexOf(location.protocol) !== 0)
 			return;
 
 		e.preventDefault();
