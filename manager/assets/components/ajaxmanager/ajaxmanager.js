@@ -1,8 +1,9 @@
 (function(){
 
-if (!window.addEventListener || !history.pushState)
+if (!window.history || !window.history.pushState)
 	return;
 
+// override ExtJS Array prototype modification to prevent some bugs
 Object.defineProperty(Array.prototype, "remove", {
     value : function(o){
         var index = this.indexOf(o);
@@ -14,16 +15,26 @@ Object.defineProperty(Array.prototype, "remove", {
     enumerable : false
 });
 
-Ext.onReady(function(){
+var debug = !!MODx.config['ajaxmanager.debug'];
 
+if (!debug) {
+	var console = {log: function(){}};
+}
+
+Ext.onReady(function(){
 	var panel = Ext.getCmp('modx-content');
 	var mask = new Ext.LoadMask(panel.el);
+	var requestStack = [];
 
 	var loadPage = function(url){
-
 		Ext.Ajax.abort();
 		MODx.request = MODx.getURLParameters();
+		document.title = MODx.lang['loading'] + ' | MODx Revolution';
+
 		mask.show();
+
+		var timeStamp = new Date().valueOf();
+		requestStack.push(timeStamp);
 
 		var loadedScripts 		= [];
 		var loadedStyleSheets	= [];
@@ -69,32 +80,47 @@ Ext.onReady(function(){
 			}
 		});
 
-		//console.log(loadedScripts);
+		console.log('request', url);
 
 		Ext.Ajax.request({
 			params: {'scripts[]': loadedScripts,'stylesheets[]': loadedStyleSheets, 'topics[]': loadedTopics},
 			url: url,
 			success: function(response, opts) {
+				console.log('response', component);
 				if (!response.responseText) {
+					console.log('Silent server response, fallback...', e);
 					location.href = url;
 					return false;
 				}
 
 				try{
 					var component = JSON.parse(response.responseText);
-					document.title = component.title;
-					panel.removeAll();
 				} catch (e) {
-					console.log && console.log(e);
+					console.log('Invalid server response, fallback...', e);
 					location.href = url;
 					return false;
 				}
 
-				MODx.activePage && MODx.activePage.ab && MODx.activePage.ab.destroy();
-
 				var scriptsToLoad = {};
 
 				var init = function(){
+					// render last requested component only
+					if (timeStamp !== requestStack[requestStack.length-1])
+						return;
+
+					console.log('initialize', component.title);
+
+					try {
+						document.title = component.title + ' | MODx Revolution';
+						panel.removeAll();
+					} catch (e) {
+						console.log('Error while clearing panel', e);
+						location.href = url;
+						return false;
+					}
+					MODx.activePage && MODx.activePage.ab && MODx.activePage.ab.destroy();
+
+					// remove all panel content except bwrap
 					var panelChildren = panel.el.dom.children;
 					var i = panelChildren.length;
 					while (i--) {
@@ -103,19 +129,23 @@ Ext.onReady(function(){
 						}
 					}
 
+					// append new content to panel
 					panel.el.dom.insertAdjacentHTML('afterbegin', component.content);
 
+					// move all scripts out of panel content to run it
 					Array.prototype.forEach.call(panel.el.dom.getElementsByTagName('script'), function(script){
 						component.embedded.scripts.push(script.innerHTML);
 						script.parentNode.removeChild(script);
 					});
 
+					// append all inline scripts to the body to execute these
 					component.embedded.scripts.forEach(function(content){
 						var script = document.createElement('script');
-
 						script.innerHTML = content.replace(/<script(.*?)>/, '').replace(/<\/script(.*?)>/ig, '');
 						document.body.appendChild(script);
 					});
+					mask.hide();
+					console.log('afterrender', component.title);
 				};
 
 				var onLoad = function(e){
@@ -126,9 +156,12 @@ Ext.onReady(function(){
 							return;
 					}
 
+					console.log('scriptsloaded', scriptsToLoad);
+					// all required scripts are loaded, initialize
 					init();
 				};
 
+				// append new external scripts to the body
 				component.scripts.forEach(function(src){
 					var script = document.createElement('script');
 					script.onload = onLoad;
@@ -137,6 +170,7 @@ Ext.onReady(function(){
 					document.body.appendChild(script);
 				});
 
+				// append new external stylesheets to the head
 				component.styles.forEach(function(src){
 					var link = document.createElement('link');
 					link.rel = 'stylesheet';
@@ -144,10 +178,9 @@ Ext.onReady(function(){
 					document.head.appendChild(link);
 				});
 
+				// if nothing to load, run initialization immediately
 				if (Object.keys(scriptsToLoad).length == 0)
 					init();
-
-				mask.hide();
 
 			},
 			failure: function(response, opts) {
@@ -158,9 +191,9 @@ Ext.onReady(function(){
 	};
 
 	MODx.loadAction = function(a,p){
-			var url = '?a='+a+'&'+(p || '');
-			history.pushState({}, "", url);
-			loadPage(url);
+		var url = '?a='+a+'&'+(p || '');
+		history.pushState({}, "", url);
+		loadPage(url);
 	}
 
 	MODx.loadPage = function(url){
@@ -181,19 +214,15 @@ Ext.onReady(function(){
 	document.querySelector('#modx-navbar').addEventListener('click', function(e){
 		var target = e.target;
 
-		if (target.nodeName == 'SPAN')
+		if (target.localName === 'span')
 			target = target.parentNode;
 
-		if (target.nodeName !== 'A' || target.href.indexOf(location.protocol) !== 0)
+		if (e.button !== 0 || target.localName !== 'a' || target.onclick !== null)
 			return;
 
 		e.preventDefault();
 
-		if (e.ctrlKey) 
-			location.href = target.href;
-		else
-			MODx.loadPage(target.href);
-
+		MODx.loadPage(target.href);
 	});
 
 });
