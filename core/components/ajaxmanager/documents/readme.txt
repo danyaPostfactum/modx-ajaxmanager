@@ -1,8 +1,8 @@
 --------------------
 Extra: AjaxManager
 --------------------
-Version: 1.1.1
-Created: December 25th, 2012
+Version: 1.1.2
+Created: February 12th, 2012
 Since: December 10th, 2012
 Author: Danil Kostin <danya.postfactum@gmail.com>
 License: GNU GPLv2 (or later at your option)
@@ -25,4 +25,4 @@ Important: This package will modify your manager assets and controllers. Make su
 
 Important: Check Restore radio in Uninstall dialog if you will have to uninstall AjaxManager!
 
-Install via Package Browser, clear MODX cache, set the list of your working correctly components in ajaxmanager.compatible_namespaces system setting.
+Install via Package Browser, clear MODX cache, clear Browser cache, set the list of your working correctly components in ajaxmanager.compatible_namespaces system setting.

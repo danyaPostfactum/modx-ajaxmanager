@@ -1,5 +1,11 @@
 Changelog for AjaxManager extra.
 
+AjaxManager 1.1.2
+====================================
+- Prevent buggy multiple panel loading (100%)
+- Fixed Ctrl+S (and other shortcuts) issues
+- Prevent incorrect uninstall proccess
+
 AjaxManager 1.1.1
 ====================================
 - Prevent buggy multiple panel loading
