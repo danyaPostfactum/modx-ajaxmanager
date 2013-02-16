@@ -17,8 +17,10 @@ Object.defineProperty(Array.prototype, "remove", {
 
 var debug = !!MODx.config['ajaxmanager.debug'];
 
-if (!debug) {
-	var console = {log: function(){}};
+function log(message, data) {
+	if (!debug) return;
+	var date = new Date();
+	console.log(message, date.toLocaleString() + ' ' + date.getMilliseconds(), data);
 }
 
 Ext.onReady(function(){
@@ -80,15 +82,14 @@ Ext.onReady(function(){
 			}
 		});
 
-		console.log('request', url);
+		log('request', url);
 
 		Ext.Ajax.request({
 			params: {'scripts[]': loadedScripts,'stylesheets[]': loadedStyleSheets, 'topics[]': loadedTopics},
 			url: url,
 			success: function(response, opts) {
-				console.log('response', component);
 				if (!response.responseText) {
-					console.log('Silent server response, fallback...', e);
+					log('Silent server response, fallback...', response);
 					location.href = url;
 					return false;
 				}
@@ -96,10 +97,12 @@ Ext.onReady(function(){
 				try{
 					var component = JSON.parse(response.responseText);
 				} catch (e) {
-					console.log('Invalid server response, fallback...', e);
+					log('Invalid server response, fallback...', response);
 					location.href = url;
 					return false;
 				}
+
+				log('response', component);
 
 				var scriptsToLoad = {};
 
@@ -108,13 +111,14 @@ Ext.onReady(function(){
 					if (timeStamp !== requestStack[requestStack.length-1])
 						return;
 
-					console.log('initialize', component.title);
+					log('initialize', component.title);
 
 					try {
 						document.title = component.title + ' | MODx Revolution';
+						console.log(panel.items.length);
 						panel.removeAll();
 					} catch (e) {
-						console.log('Error while clearing panel', e);
+						log('Error while clearing panel', e);
 						location.href = url;
 						return false;
 					}
@@ -145,7 +149,7 @@ Ext.onReady(function(){
 						document.body.appendChild(script);
 					});
 					mask.hide();
-					console.log('afterrender', component.title);
+					log('afterrender', component.title);
 				};
 
 				var onLoad = function(e){
@@ -156,7 +160,7 @@ Ext.onReady(function(){
 							return;
 					}
 
-					console.log('scriptsloaded', scriptsToLoad);
+					log('scriptsloaded', scriptsToLoad);
 					// all required scripts are loaded, initialize
 					init();
 				};
@@ -184,7 +188,7 @@ Ext.onReady(function(){
 
 			},
 			failure: function(response, opts) {
-				console.log('server-side failure with status code ' + response.status);
+				log('server-side failure', response.status);
 				location.href = url;
 			}
 		});
