@@ -1,5 +1,10 @@
 Changelog for AjaxManager extra.
 
+AjaxManager 1.1.3
+====================================
+- Fixed Tree drag'n'drop
+- Fixed Custom Manager (Components) Pages loading
+
 AjaxManager 1.1.2
 ====================================
 - Prevent buggy multiple panel loading (100%)
