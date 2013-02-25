@@ -115,8 +115,11 @@ Ext.onReady(function(){
 
 					try {
 						document.title = component.title + ' | MODx Revolution';
-						console.log(panel.items.length);
+						// sometimes resource panel is not removed from dom
+						var cmp = panel.items.get(0);
+						var bwrap = cmp && cmp.bwrap;
 						panel.removeAll();
+						bwrap && bwrap.remove();
 					} catch (e) {
 						log('Error while clearing panel', e);
 						location.href = url;
