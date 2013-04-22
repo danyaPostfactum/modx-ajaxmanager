@@ -206,12 +206,13 @@ Ext.onReady(function(){
 			}
 		});
 	};
-
 	MODx.on('beforeLoadPage', function(url){
 			history.pushState({}, "", url);
 			loadPage(url);
 			return false;
 	});
+
+	history.replaceState({}, "", location.href);
 
 	window.addEventListener('popstate',function(e){
 		if (e.state !== null) {
@@ -232,6 +233,7 @@ Ext.onReady(function(){
 
 		MODx.loadPage(target.href);
 	});
+
 
 });
 
