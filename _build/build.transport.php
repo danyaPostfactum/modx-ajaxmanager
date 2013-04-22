@@ -92,6 +92,11 @@ $vehicle->validate('php',array(
     'name' => 'validator',
     'type' => 'php'
 ));
+$vehicle->resolve('php',array(
+    'source' => $sources['build'].'resolver.php',
+    'name' => 'resolve',
+    'type' => 'php'
+));
 $vehicle->resolve('file',array(
     'source' => $sources['source_manager_assets'],
     'target' => "return MODX_MANAGER_PATH . 'assets/components/';",
