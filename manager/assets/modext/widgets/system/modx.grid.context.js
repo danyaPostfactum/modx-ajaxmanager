@@ -59,7 +59,7 @@ MODx.grid.Context = function(config) {
 };
 Ext.extend(MODx.grid.Context,MODx.grid.Grid,{
     updateContext: function(itm,e) {
-        location.href = 'index.php?a='+MODx.action['context/update']+'&key='+this.menu.record.key;
+        MODx.loadPage(MODx.action['context/update'], 'key='+this.menu.record.key);
     }
     ,getMenu: function() {
         var r = this.getSelectionModel().getSelected();
@@ -75,7 +75,7 @@ Ext.extend(MODx.grid.Context,MODx.grid.Grid,{
             m.push('-');
             m.push({
                 text: _('context_remove')
-                ,handler: this.removeRow.createDelegate(this,["context_remove_confirm"])
+                ,handler: this.remove.createDelegate(this,["context_remove_confirm"])
             });
         }
         return m;

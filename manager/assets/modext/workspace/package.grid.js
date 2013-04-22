@@ -188,7 +188,7 @@ Ext.extend(MODx.grid.Package,MODx.grid.Grid,{
 			this.menu.record = record.data; 
 			switch (act) {
                 case 'remove':
-                    this.removePackage(record, e);
+                    this.remove(record, e);
                     break;
                 case 'install':                                       
                 case 'reinstall':                                       
@@ -279,7 +279,7 @@ Ext.extend(MODx.grid.Package,MODx.grid.Grid,{
 	
 	/* Go to package details @TODO : Stay on the same page */
     ,viewPackage: function(btn,e) {
-        location.href = 'index.php?a='+MODx.action['workspaces/package/view']+'&signature='+this.menu.record.signature;
+        MODx.loadPage(MODx.action['workspaces/package/view'], 'signature='+this.menu.record.signature);
     }
     
 	/* Search for a package update - only for installed package */
@@ -354,7 +354,10 @@ Ext.extend(MODx.grid.Package,MODx.grid.Grid,{
     }
     
 	/* Remove a package entirely */
-    ,removePackage: function(btn,e) {
+    ,remove: function(btn,e) {
+        if (this.destroying) {
+            return MODx.grid.Package.superclass.remove.apply(this, arguments);
+        }
     	var r = this.menu.record;
         var topic = '/workspace/package/remove/'+r.signature+'/';
         

@@ -413,7 +413,7 @@ Ext.extend(MODx.grid.ElementProperties,MODx.grid.LocalProperty,{
             }
         },this);
     }
-
+    
     ,removeMultiple: function(btn,e) {
         var rows = this.getSelectionModel().getSelections();
         var rids = [];
@@ -516,7 +516,7 @@ Ext.extend(MODx.grid.ElementProperties,MODx.grid.LocalProperty,{
             m.push({
                 text: _('property_remove')
                 ,scope: this
-                ,handler: this.removeRow.createDelegate(this,[{
+                ,handler: this.remove.createDelegate(this,[{
                     title: _('warning')
                     ,text: _('property_remove_confirm')
                 }])
@@ -527,7 +527,7 @@ Ext.extend(MODx.grid.ElementProperties,MODx.grid.LocalProperty,{
             m.push({
                 text: _('property_remove')
                 ,scope: this
-                ,handler: this.removeRow.createDelegate(this,[{
+                ,handler: this.remove.createDelegate(this,[{
                     title: _('warning')
                     ,text: _('property_remove_confirm')
                 }])
@@ -602,7 +602,7 @@ Ext.extend(MODx.grid.ElementPropertyOption,MODx.grid.LocalGrid,{
         return [{
             text: _('property_option_remove')
             ,scope: this
-            ,handler: this.removeRow.createDelegate(this,[{
+            ,handler: this.remove.createDelegate(this,[{
                 title: _('warning')
                 ,text: _('property_option_remove_confirm')
             }])

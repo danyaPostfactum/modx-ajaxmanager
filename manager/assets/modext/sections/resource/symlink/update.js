@@ -1,17 +1,13 @@
 /**
- * Loads the update static resource page
+ * Loads the update symlink resource page
  * 
- * @class MODx.page.UpdateStatic
+ * @class MODx.page.UpdateSymLink
  * @extends MODx.Component
  * @param {Object} config An object of config properties
- * @xtype modx-page-static-update
+ * @xtype modx-page-symlink-update
  */
-MODx.page.UpdateStatic = function(config) {
-    config = config || {record:{}};
-    config.record = config.record || {};
-    Ext.apply(config.record,{
-        'parent-cmb': config.record['parent']
-    });
+MODx.page.UpdateSymLink = function(config) {
+    config = config || {};
         
     Ext.applyIf(config,{
         url: MODx.config.connectors_url+'resource/index.php'
@@ -26,8 +22,8 @@ MODx.page.UpdateStatic = function(config) {
             ,cancel: MODx.action['welcome']
         }
         ,components: [{
-            xtype: 'modx-panel-static'
-            ,renderTo: 'modx-panel-static-div'
+            xtype: 'modx-panel-symlink'
+            ,renderTo: 'modx-panel-symlink-div'
             ,resource: config.resource
             ,record: config.record || {}
             ,publish_document: config.publish_document
@@ -35,12 +31,12 @@ MODx.page.UpdateStatic = function(config) {
             ,show_tvs: config.show_tvs
             ,url: config.url
         }]
-        ,loadStay: true
+    	,loadStay: true
         ,buttons: this.getButtons(config)
     });
-    MODx.page.UpdateStatic.superclass.constructor.call(this,config);
+    MODx.page.UpdateSymLink.superclass.constructor.call(this,config);
 };
-Ext.extend(MODx.page.UpdateStatic,MODx.Component,{
+Ext.extend(MODx.page.UpdateSymLink,MODx.Component,{
     preview: function() {
         window.open(this.config.preview_url);
         return false;
@@ -93,12 +89,12 @@ Ext.extend(MODx.page.UpdateStatic,MODx.Component,{
             MODx.loadPage(MODx.action['welcome']);
         }
     }
+    
     ,getButtons: function(cfg) {
         var btns = [];
         if (cfg.canSave == 1) {
             btns.push({
                 process: 'update'
-                ,id: 'modx-abtn-save'
                 ,text: _('save')
                 ,method: 'remote'
                 ,checkDirty: cfg.richtext || MODx.request.activeSave == 1 ? false : true
@@ -113,7 +109,6 @@ Ext.extend(MODx.page.UpdateStatic,MODx.Component,{
                 text: cfg.lockedText || _('locked')
                 ,handler: Ext.emptyFn
                 ,disabled: true
-                ,id: 'modx-abtn-locked'
             });
             btns.push('-');
         }
@@ -123,7 +118,6 @@ Ext.extend(MODx.page.UpdateStatic,MODx.Component,{
                 ,text: _('duplicate')
                 ,handler: this.duplicateResource
                 ,scope:this
-                ,id: 'modx-abtn-duplicate'
             });
             btns.push('-');
         }
@@ -133,7 +127,6 @@ Ext.extend(MODx.page.UpdateStatic,MODx.Component,{
                 ,text: _('delete')
                 ,handler: this.deleteResource
                 ,scope:this
-                ,id: 'modx-abtn-delete'
             });
             btns.push('-');
         }
@@ -142,7 +135,6 @@ Ext.extend(MODx.page.UpdateStatic,MODx.Component,{
             ,text: _('view')
             ,handler: this.preview
             ,scope: this
-            ,id: 'modx-abtn-preview'
         });
         btns.push('-');
         btns.push({
@@ -150,15 +142,13 @@ Ext.extend(MODx.page.UpdateStatic,MODx.Component,{
             ,text: _('cancel')
             ,handler: this.cancel
             ,scope: this
-            ,id: 'modx-abtn-cancel'
         });
         btns.push('-');
         btns.push({
             text: _('help_ex')
             ,handler: MODx.loadHelpPane
-            ,id: 'modx-abtn-help'
         });
         return btns;
     }
 });
-Ext.reg('modx-page-static-update',MODx.page.UpdateStatic);
+Ext.reg('modx-page-symlink-update',MODx.page.UpdateSymLink);

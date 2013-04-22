@@ -295,7 +295,10 @@ Ext.extend(MODx.tree.Tree,Ext.tree.TreePanel,{
     /**
      * Abstracted remove function
      */
-    ,removeNode: function(text,substr,split) {
+    ,remove: function(text,substr,split) {
+        if (this.destroying) {
+            return MODx.tree.Tree.superclass.remove.apply(this, arguments);
+        }
         var node = this.cm.activeNode;
         var id = this._extractId(node.id,substr,split);
         var p = {action: this.config.removeAction || 'remove'};
@@ -504,7 +507,7 @@ Ext.extend(MODx.tree.Tree,Ext.tree.TreePanel,{
      * @param {String} loc The URL to direct to.
      */
     ,redirect: function(loc) {
-        location.href = loc;
+        MODx.loadPage(loc);
     }
 	
     ,loadAction: function(p) {
@@ -513,7 +516,7 @@ Ext.extend(MODx.tree.Tree,Ext.tree.TreePanel,{
             var pid = this.cm.activeNode.id.split('_');
             id = 'id='+pid[1];
         }
-        MODx.loadPage('index.php?'+id+'&'+p);
+        MODx.loadPage('?'+id+'&'+p);
     }
     /**
      * Loads the default toolbar for the tree.

@@ -207,16 +207,24 @@ Ext.reg('modx-layout',MODx.Layout);
 MODx.LayoutMgr = function() {
     var _activeMenu = 'menu0';
     return {
-        loadAction: function(a,p) {
-            location.href = '?a='+a+'&'+(p || '');
-            return false;
-        }
-        ,loadPage: function(url) {
-            if (!isNaN(url))
-                this.loadAction.apply(this, arguments);
-            else
+        loadPage: function(action, parameters) {
+            var url = '';
+            // Handles url, passed as first argument
+            if (isNaN(action)) {
+                url = action;
+            } else {
+                var parts = [];
+                if (action) {
+                    parts.push('a=' + action);
+                }
+                if (parameters) {
+                    parts.push(parameters);
+                }
+                url = '?' + parts.join('&');
+            }
+            if (MODx.fireEvent('beforeLoadPage', url)) {
                 location.href = url;
-            return false;
+            }
         }
         ,changeMenu: function(a,sm) {
             if (sm === _activeMenu) return false;
@@ -231,7 +239,6 @@ MODx.LayoutMgr = function() {
 }();
 
 /* aliases for quicker reference */
-MODx.loadAction = MODx.LayoutMgr.loadAction;
 MODx.loadPage = MODx.LayoutMgr.loadPage;
 MODx.showDashboard = MODx.LayoutMgr.showDashboard;
 MODx.hideDashboard = MODx.LayoutMgr.hideDashboard;

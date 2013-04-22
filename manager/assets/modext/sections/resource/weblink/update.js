@@ -1,17 +1,13 @@
 /**
- * Loads the update static resource page
+ * Loads the update weblink resource page
  * 
- * @class MODx.page.UpdateStatic
+ * @class MODx.page.UpdateWebLink
  * @extends MODx.Component
  * @param {Object} config An object of config properties
- * @xtype modx-page-static-update
+ * @xtype modx-page-weblink-update
  */
-MODx.page.UpdateStatic = function(config) {
-    config = config || {record:{}};
-    config.record = config.record || {};
-    Ext.apply(config.record,{
-        'parent-cmb': config.record['parent']
-    });
+MODx.page.UpdateWebLink = function(config) {
+    config = config || {};
         
     Ext.applyIf(config,{
         url: MODx.config.connectors_url+'resource/index.php'
@@ -26,8 +22,8 @@ MODx.page.UpdateStatic = function(config) {
             ,cancel: MODx.action['welcome']
         }
         ,components: [{
-            xtype: 'modx-panel-static'
-            ,renderTo: 'modx-panel-static-div'
+            xtype: 'modx-panel-weblink'
+            ,renderTo: 'modx-panel-weblink-div'
             ,resource: config.resource
             ,record: config.record || {}
             ,publish_document: config.publish_document
@@ -35,12 +31,12 @@ MODx.page.UpdateStatic = function(config) {
             ,show_tvs: config.show_tvs
             ,url: config.url
         }]
-        ,loadStay: true
+    	,loadStay: true
         ,buttons: this.getButtons(config)
     });
-    MODx.page.UpdateStatic.superclass.constructor.call(this,config);
+    MODx.page.UpdateWebLink.superclass.constructor.call(this,config);
 };
-Ext.extend(MODx.page.UpdateStatic,MODx.Component,{
+Ext.extend(MODx.page.UpdateWebLink,MODx.Component,{
     preview: function() {
         window.open(this.config.preview_url);
         return false;
@@ -93,6 +89,7 @@ Ext.extend(MODx.page.UpdateStatic,MODx.Component,{
             MODx.loadPage(MODx.action['welcome']);
         }
     }
+    
     ,getButtons: function(cfg) {
         var btns = [];
         if (cfg.canSave == 1) {
@@ -120,37 +117,37 @@ Ext.extend(MODx.page.UpdateStatic,MODx.Component,{
         if (cfg.canCreate == 1) {
             btns.push({
                 process: 'duplicate'
+                ,id: 'modx-abtn-duplicate'
                 ,text: _('duplicate')
                 ,handler: this.duplicateResource
                 ,scope:this
-                ,id: 'modx-abtn-duplicate'
             });
             btns.push('-');
         }
         if (cfg.canDelete == 1 && !cfg.locked) {
             btns.push({
                 process: 'delete'
+                ,id: 'modx-abtn-delete'
                 ,text: _('delete')
                 ,handler: this.deleteResource
                 ,scope:this
-                ,id: 'modx-abtn-delete'
             });
             btns.push('-');
         }
         btns.push({
             process: 'preview'
+            ,id: 'modx-abtn-preview'
             ,text: _('view')
             ,handler: this.preview
             ,scope: this
-            ,id: 'modx-abtn-preview'
         });
         btns.push('-');
         btns.push({
             process: 'cancel'
+            ,id: 'modx-abtn-cancel'
             ,text: _('cancel')
             ,handler: this.cancel
             ,scope: this
-            ,id: 'modx-abtn-cancel'
         });
         btns.push('-');
         btns.push({
@@ -161,4 +158,4 @@ Ext.extend(MODx.page.UpdateStatic,MODx.Component,{
         return btns;
     }
 });
-Ext.reg('modx-page-static-update',MODx.page.UpdateStatic);
+Ext.reg('modx-page-weblink-update',MODx.page.UpdateWebLink);
