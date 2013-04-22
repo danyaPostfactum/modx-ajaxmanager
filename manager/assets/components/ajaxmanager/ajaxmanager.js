@@ -15,7 +15,7 @@ Object.defineProperty(Array.prototype, "remove", {
     enumerable : false
 });
 
-var debug = !!MODx.config['ajaxmanager.debug'];
+var debug = MODx.config['ajaxmanager.debug'] == true;
 
 function log(message, data) {
 	if (!debug) return;
@@ -128,7 +128,14 @@ Ext.onReady(function(){
 						location.href = url;
 						return false;
 					}
-					MODx.activePage && MODx.activePage.ab && MODx.activePage.ab.destroy();
+					if (MODx.activePage) {
+						if (MODx.activePage.config.resource) {
+							MODx.releaseLock(MODx.activePage.config.resource);
+						}
+						MODx.activePage.ab && MODx.activePage.ab.destroy();
+						MODx.activePage.destroy();
+						MODx.activePage = null;
+					}
 
 					// remove all panel content except bwrap
 					var panelChildren = panel.el.dom.children;
