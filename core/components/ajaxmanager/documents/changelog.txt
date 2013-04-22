@@ -4,6 +4,7 @@ AjaxManager 1.1.5
 ====================================
 - Fix install/uninstall process (wrong modext patching/removing)
 - Release lock on resource page unload
+- History navigation fix (correct first entry restoring)
 
 AjaxManager 1.1.4
 ====================================
