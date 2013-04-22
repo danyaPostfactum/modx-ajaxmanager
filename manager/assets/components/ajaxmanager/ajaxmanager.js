@@ -27,9 +27,12 @@ Ext.onReady(function(){
 	var panel = Ext.getCmp('modx-content');
 	var mask = new Ext.LoadMask(panel.el);
 	var requestStack = [];
+	var transaction = null;
 
 	var loadPage = function(url){
-		Ext.Ajax.abort();
+		if (transaction) {
+			Ext.Ajax.abort(transaction);
+		}
 		MODx.request = MODx.getURLParameters();
 		document.title = MODx.lang['loading'] + ' | MODx Revolution';
 
@@ -84,7 +87,7 @@ Ext.onReady(function(){
 
 		log('request', url);
 
-		Ext.Ajax.request({
+		transaction = Ext.Ajax.request({
 			params: {'scripts[]': loadedScripts,'stylesheets[]': loadedStyleSheets, 'topics[]': loadedTopics},
 			url: url,
 			success: function(response, opts) {
@@ -197,20 +200,11 @@ Ext.onReady(function(){
 		});
 	};
 
-	MODx.loadAction = function(a,p){
-		var url = '?a='+a+'&'+(p || '');
-		history.pushState({}, "", url);
-		loadPage(url);
-	}
-
-	MODx.loadPage = function(url){
-		if (!isNaN(url))
-			this.loadAction.apply(this, arguments);
-		else {
+	MODx.on('beforeLoadPage', function(url){
 			history.pushState({}, "", url);
 			loadPage(url);
-		}
-	}
+			return false;
+	});
 
 	window.addEventListener('popstate',function(e){
 		if (e.state !== null) {
