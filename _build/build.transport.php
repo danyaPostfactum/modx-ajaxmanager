@@ -12,8 +12,8 @@ set_time_limit(0);
 /* define version */
 define('PKG_NAME','AjaxManager');
 define('PKG_NAMESPACE','ajaxmanager');
-define('PKG_VERSION','1.1.4');
-define('PKG_RELEASE','rc-5');
+define('PKG_VERSION','1.1.5');
+define('PKG_RELEASE','dev');
  
 /* define sources */
 $root = dirname(dirname(__FILE__)).'/';
