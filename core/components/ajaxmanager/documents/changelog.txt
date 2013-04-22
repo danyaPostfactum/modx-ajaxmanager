@@ -1,5 +1,10 @@
 Changelog for AjaxManager extra.
 
+AjaxManager 1.1.5
+====================================
+- Fix install/uninstall process (wrong modext patching/removing)
+- Release lock on resource page unload
+
 AjaxManager 1.1.4
 ====================================
 - Ready for MODx 2.2.7! No patches!
