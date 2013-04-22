@@ -12,6 +12,7 @@ $version = $object->xpdo->getVersionData();
 switch ($options[xPDOTransport::PACKAGE_ACTION]) {
 	case xPDOTransport::ACTION_INSTALL:
 	case xPDOTransport::ACTION_UPGRADE:
+	case xPDOTransport::ACTION_UNINSTALL:
 		if (count($this->payload['resolve']) == 6) {
 			if( version_compare($version['full_version'], '2.2.7-dev', '>=')) {
 				// Disable patch, targeted to 2.2.6
