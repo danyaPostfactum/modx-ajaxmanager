@@ -218,7 +218,7 @@ switch ($modx->event->name)
         if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && $_SERVER['HTTP_X_REQUESTED_WITH'] == 'XMLHttpRequest' && $controller->loadHeader) {
             $action = $modx->actionMap[ (integer) $modx->request->action ];
             $namespaces = explode(',', $modx->getOption('ajaxmanager.compatible_namespaces', null, 'core'));
-            if (!in_array($action['namespace'], $namespaces)) {
+            if ($modx->request->action && !in_array($action['namespace'], $namespaces)) {
                 die();
             }
             $controller->loadHeader = false;
