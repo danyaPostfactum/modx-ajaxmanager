@@ -5,9 +5,9 @@ $settings['compatible_namespaces']= $modx->newObject('modSystemSetting');
 $settings['compatible_namespaces']->fromArray(array(
         'key' => 'ajaxmanager.compatible_namespaces',
         'xtype' => 'textfield',
-        'value' => 'core',
+        'value' => 'core,clientconfig,minishop2',
         'namespace' => 'ajaxmanager',
-		'area' => 'general'
+        'area' => 'general'
     ),'',true,true);
 
 return $settings;
