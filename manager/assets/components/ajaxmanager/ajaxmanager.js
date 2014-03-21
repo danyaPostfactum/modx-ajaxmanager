@@ -67,7 +67,9 @@ Ext.onReady(function(){
 					return;
 				}
 			} else {
-				loadedScripts.push(script.src.replace(location.protocol + '//' + location.host, ''));
+				var src = script.src.replace(location.protocol + '//' + location.host, '');
+				var queryIndex = src.indexOf('?');
+				loaded.scripts.push(queryIndex > -1 ? src.substring(0, queryIndex) : src);
 			}
 		});
 
