@@ -90,21 +90,21 @@ $files = $preload ? array(
 //    'util/lightbox.js',
 //    'util/uploaddialog.js',
 //    'util/utilities.js',
-    'widgets/core/modx.combo.js',
+//    'widgets/core/modx.combo.js',
     'widgets/core/modx.console.js',
     'widgets/core/modx.grid.js',
     'widgets/core/modx.grid.local.property.js',
     'widgets/core/modx.grid.settings.js',
     'widgets/core/modx.orm.js',
-    'widgets/core/modx.panel.js',
+//    'widgets/core/modx.panel.js',
     'widgets/core/modx.panel.wizard.js',
     'widgets/core/modx.portal.js',
     'widgets/core/modx.rte.browser.js',
-    'widgets/core/modx.tabs.js',
+//    'widgets/core/modx.tabs.js',
 //    'widgets/core/modx.tree.checkbox.js',
 //    'widgets/core/modx.tree.column.js',
-    'widgets/core/modx.tree.js',
-    'widgets/core/modx.window.js',
+//    'widgets/core/modx.tree.js',
+//    'widgets/core/modx.window.js',
     'widgets/element/modx.grid.element.properties.js',
     'widgets/element/modx.grid.plugin.event.js',
     'widgets/element/modx.grid.template.tv.js',
@@ -216,9 +216,15 @@ switch ($modx->event->name)
     case 'OnManagerPageBeforeRender':
         
         if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && $_SERVER['HTTP_X_REQUESTED_WITH'] == 'XMLHttpRequest' && $controller->loadHeader) {
-            $action = $modx->actionMap[ (integer) $modx->request->action ];
+            $route = $modx->request->action;
+            if (intval($route) > 0) {
+                $action = $modx->actionMap[$route];
+                $namespace = $action['namespace'];
+            } else {
+                $namespace = $modx->request->namespace;
+            }
             $namespaces = explode(',', $modx->getOption('ajaxmanager.compatible_namespaces', null, 'core'));
-            if ($modx->request->action && !in_array($action['namespace'], $namespaces)) {
+            if ($route && !in_array($namespace, $namespaces)) {
                 die();
             }
             $controller->loadHeader = false;
