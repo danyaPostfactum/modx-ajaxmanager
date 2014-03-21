@@ -28,8 +28,6 @@ $sources = array(
     'source_manager_assets' => $root.'manager/assets/components/'.PKG_NAMESPACE,
     'source_core' => $root.'core/components/'.PKG_NAMESPACE,
     'source_connectors' => $root.'connectors/components/'.PKG_NAMESPACE,
-    'modext_patch' => $root.'manager/assets/modext/',
-    'controllers_patch' => $root.'manager/controllers/default/',
 );
 unset($root);
  
@@ -92,11 +90,6 @@ $vehicle->validate('php',array(
     'name' => 'validator',
     'type' => 'php'
 ));
-$vehicle->resolve('php',array(
-    'source' => $sources['build'].'resolver.php',
-    'name' => 'resolve',
-    'type' => 'php'
-));
 $vehicle->resolve('file',array(
     'source' => $sources['source_manager_assets'],
     'target' => "return MODX_MANAGER_PATH . 'assets/components/';",
@@ -108,14 +101,6 @@ $vehicle->resolve('file',array(
 $vehicle->resolve('file',array(
     'source' => $sources['source_connectors'],
     'target' => "return MODX_CONNECTORS_PATH . 'components/';",
-));
-$vehicle->resolve('file',array(
-    'source' => $sources['modext_patch'],
-    'target' => "return MODX_MANAGER_PATH . 'assets/';",
-));
-$vehicle->resolve('file',array(
-    'source' => $sources['controllers_patch'],
-    'target' => "return MODX_MANAGER_PATH . 'controllers/';",
 ));
 $builder->putVehicle($vehicle);
 
