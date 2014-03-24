@@ -1,5 +1,10 @@
 Changelog for AjaxManager extra.
 
+AjaxManager 1.1.7
+====================================
+- Fix javascript inclusion order (this should improve compatibility)
+- Add Resource Hider compontent to the list compatible components
+
 AjaxManager 1.1.6
 ====================================
 - Add TinyMCE support
