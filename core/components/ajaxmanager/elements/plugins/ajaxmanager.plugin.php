@@ -244,9 +244,11 @@ switch ($modx->event->name)
             $content = $controller->content;
             $title = $controller->getPageTitle();
 
+            $scripts = array();
             $styles = array();
             $sources = array();
             $standalone = array();
+            $topics = array();
 
             $loadedStylesheets = $_REQUEST['stylesheets'];
             $loadedScripts = $_REQUEST['scripts'];
@@ -256,9 +258,25 @@ switch ($modx->event->name)
             $embedded['styles']   = array();
             $embedded['scripts']  = array();
 
-            $startupBlocks = $modx->sjscripts;
+            foreach ($controller->head['css'] as $src) {
+                if (!in_array($src, $loadedStylesheets))
+                    $styles[] = $src;
+            }
 
-            foreach ($startupBlocks as $html) {
+            foreach ($controller->head['js'] as $src) {
+                if (!in_array($src, $loadedScripts))
+                    $sources[] = $src;
+            }
+
+            foreach ($controller->head['html'] as $html) {
+                if (preg_match('/<script(.*?)>/', $html)){
+                    $embedded['scripts'][] = $html;
+                } else if (preg_match('/<style(.*?)>/', $html)){
+                    $embedded['styles'][] = $html;
+                }
+            }
+
+            foreach ($modx->sjscripts as $html) {
                 if (preg_match('/<script(.*?)>/', $html, $matches)){
                     if (preg_match('/src\s*=\s*(["\'])(?P<src>.*?)\1/', $matches[1], $matches)) {
                         $src = $matches['src'];
@@ -276,38 +294,24 @@ switch ($modx->event->name)
                 }
             }
 
-            foreach ($controller->head['css'] as $src) {
-                if (in_array($src, $loadedStylesheets)) continue;
-                $styles[] = $src;
+            foreach ($controller->head['lastjs'] as $src) {
+                if (!in_array($src, $loadedScripts))
+                    $sources[] = $src;
             }
 
-            $scripts = array();
-            foreach (array_merge($controller->head['js'], $controller->head['lastjs']) as $src) {
-                if (in_array($src, $loadedScripts)) continue;
-                $sources[] = $src;
-            }
             if (count($sources)){
                 $scripts[] = $managerUrl.'min/index.php?f='.implode(',',$sources);
             }
             $scripts = array_merge($scripts, $standalone);
 
-            $topics = array();
             foreach($controller->getLanguageTopics() as $topic) {
-                if (in_array($topic, $loadedTopics)) continue;
-                $topics[] = $topic;
+                if (!in_array($topic, $loadedTopics))
+                    $topics[] = $topic;
             }
             if (count($topics)){
                 $scripts[] = $modx->getOption('connectors_url', null, MODX_CONNECTORS_URL). 'components/ajaxmanager/lang.js.php?ctx=mgr&topic='.implode(',', $topics);
             }
 
-            foreach ($controller->head['html'] as $src) {
-                if (preg_match('/<script(.*?)>/', $src)){
-                    $embedded['scripts'][] = $src;
-                } else if (preg_match('/<style(.*?)>/', $src)){
-                    $embedded['styles'][] = $src;
-                }
-            }
-            
             $response = array(
                 'title'     => '',
                 'content'   => '',
