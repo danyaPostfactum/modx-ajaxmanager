@@ -1,5 +1,11 @@
 Changelog for AjaxManager extra.
 
+AjaxManager 1.1.6
+====================================
+- Add TinyMCE support
+- Add MODx 2.3 support
+- Set ClientConfig and miniShop2 as compatible components by default
+
 AjaxManager 1.1.5
 ====================================
 - Fix install/uninstall process (wrong modext patching/removing)
