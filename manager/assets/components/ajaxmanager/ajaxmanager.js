@@ -282,9 +282,12 @@ Ext.onReady(function(){
 		if (e.button !== 0 || target.localName !== 'a' || target.onclick !== null)
 			return;
 
+		if (target.hostname != location.hostname)
+			return;
+
 		e.preventDefault();
 
-		MODx.loadPage(target.href);
+		MODx.loadPage(target.search || '?');
 	});
 
 
