@@ -15,14 +15,35 @@ Object.defineProperty(Array.prototype, "remove", {
     enumerable : false
 });
 
-MODx.panel.Resource.prototype.beforeDestroy = function(e){
-    if (e)
-        return;
-    if (this.rteLoaded && MODx.unloadRTE){
-        MODx.unloadRTE(this.rteElements);
-        this.rteLoaded = false;
+MODx.TreeDrop.prototype.destroy = function() {
+    this.targetEl.destroy();
+    MODx.TreeDrop.superclass.destroy.call(this);
+};
+
+var tvDropTargets = [];
+MODx.makeDroppable = function(fld,h,p) {
+    if (!fld) return false;
+    h = h || Ext.emptyFn;
+    if (fld.getEl) {
+        var el = fld.getEl();
+    } else if (fld) {
+        el = fld;
     }
-    MODx.panel.Resource.superclass.beforeDestroy.call(this);
+    if (el) {
+        var drop = new MODx.load({
+            xtype: 'modx-treedrop'
+            ,target: fld
+            ,targetEl: el.dom
+            ,onInsert: h
+            ,panel: p || 'modx-panel-resource'
+        });
+        fld.on('destroy', function(){
+            drop.destroy();
+        });
+        if (fld.id.indexOf('tv') === 0)
+            tvDropTargets.push(drop);
+    }
+    return true;
 };
 
 var tinyMCEFixed = false;
@@ -56,6 +77,17 @@ function fixTinyMCE(){
 		}, 0);
 	};
 	tinyMCEFixed = true;
+}
+
+function destroyTVs() {
+	tvDropTargets.forEach(function(dropTarget) {
+		if (dropTarget.destroy) {
+			dropTarget.destroy();
+		} else if (dropTarget.trigger) {
+			dropTarget.trigger('destroy');
+		}
+	});
+	tvDropTargets.length = 0;
 }
 
 var debug = MODx.config['ajaxmanager.debug'] == true;
@@ -167,6 +199,7 @@ Ext.onReady(function(){
 
 					try {
 						document.title = component.title + ' | MODx Revolution';
+						destroyTVs();
 						if (MODx.unloadTVRTE)
 							MODx.unloadTVRTE();
 						// sometimes resource panel is not removed from dom
