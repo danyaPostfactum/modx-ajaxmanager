@@ -203,7 +203,7 @@ Ext.onReady(function(){
 					fixTinyMCE();
 
 					// move all scripts out of panel content to run it
-					Array.prototype.forEach.call(panel.el.dom.getElementsByTagName('script'), function(script){
+					Array.apply(null, panel.el.dom.getElementsByTagName('script')).forEach(function(script){
 						component.embedded.scripts.push(script.innerHTML);
 						script.parentNode.removeChild(script);
 					});
