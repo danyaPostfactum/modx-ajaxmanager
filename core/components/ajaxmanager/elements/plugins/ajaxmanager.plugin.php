@@ -282,7 +282,9 @@ switch ($modx->event->name)
             }
             $scripts = array_merge($scripts, $standalone);
 
-            foreach($controller->getLanguageTopics() as $topic) {
+            $langTopics = $controller->getPlaceholder('_lang_topics');
+            $langTopics = explode(',',$langTopics);
+            foreach($langTopics as $topic) {
                 if (!in_array($topic, $loadedTopics))
                     $topics[] = $topic;
             }
