@@ -320,6 +320,18 @@ Ext.onReady(function(){
 
 		e.preventDefault();
 
+		// Hide menu after click
+		var node = target;
+		while (node = node.parentNode) {
+			if (node.classList.contains('modx-subnav')) {
+				node.style.display = 'none';
+				setTimeout(function() {
+					node.style.display = 'block';
+				}, 200);
+				break;
+			}
+		}
+
 		MODx.loadPage(target.search || '?');
 	});
 
