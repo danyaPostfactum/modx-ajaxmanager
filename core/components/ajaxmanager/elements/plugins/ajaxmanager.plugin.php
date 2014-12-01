@@ -242,6 +242,7 @@ switch ($modx->event->name)
             }
 
             foreach ($controller->head['js'] as $src) {
+                $src = strtok($src, '?'); // Trim query string
                 if (!in_array($src, $loadedScripts))
                     $sources[] = $src;
             }
@@ -274,6 +275,7 @@ switch ($modx->event->name)
             }
 
             foreach ($controller->head['lastjs'] as $src) {
+                $src = strtok($src, '?'); // Trim query string
                 if (!in_array($src, $loadedScripts))
                     $sources[] = $src;
             }
@@ -294,21 +296,15 @@ switch ($modx->event->name)
             }
 
             $response = array(
-                'title'     => '',
-                'content'   => '',
-                'scripts'   => array(),
-                'styles'    => array(),
+                'title'     => $title,
+                'content'   => $content,
+                'scripts'   => $scripts,
+                'styles'    => $styles,
                 'embedded'  => array(
-                    'scripts'    => array(),
-                    'styles'     => array()
+                    'scripts'    => $embedded['scripts'],
+                    'styles'     => $embedded['styles']
                 )
             );
-
-            $response['content']    = $content;
-            $response['title']      = $title;
-            $response['scripts']    = $scripts;
-            $response['styles']     = $styles;
-            $response['embedded']   = $embedded;
 
             $controller->content = json_encode($response);
 
