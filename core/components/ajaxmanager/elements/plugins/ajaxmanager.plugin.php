@@ -228,22 +228,21 @@ switch ($modx->event->name)
             $standalone = array();
             $topics = array();
 
-            $loadedStylesheets = $_REQUEST['stylesheets'];
-            $loadedScripts = $_REQUEST['scripts'];
-            $loadedTopics = $_REQUEST['topics'];
+
+            $loaded = json_decode($_REQUEST['loaded'], true);
 
             $embedded = array();
             $embedded['styles']   = array();
             $embedded['scripts']  = array();
 
             foreach ($controller->head['css'] as $src) {
-                if (!in_array($src, $loadedStylesheets))
+                if (!in_array($src, $loaded['styleSheets']))
                     $styles[] = $src;
             }
 
             foreach ($controller->head['js'] as $src) {
                 $src = strtok($src, '?'); // Trim query string
-                if (!in_array($src, $loadedScripts))
+                if (!in_array($src, $loaded['scripts']))
                     $sources[] = $src;
             }
 
@@ -260,7 +259,7 @@ switch ($modx->event->name)
                     if (preg_match('/src\s*=\s*(["\'])(?P<src>.*?)\1/', $matches[1], $matches)) {
                         $src = $matches['src'];
                         $src = strtok($src, '?'); // Trim query string
-                        if (in_array($src, $loadedScripts)) continue;
+                        if (in_array($src, $loaded['scripts'])) continue;
                         if (preg_match('/tiny_mce(_src)?.js$/', $src)) {
                             $standalone[] = $src;
                             continue;
@@ -276,7 +275,7 @@ switch ($modx->event->name)
 
             foreach ($controller->head['lastjs'] as $src) {
                 $src = strtok($src, '?'); // Trim query string
-                if (!in_array($src, $loadedScripts))
+                if (!in_array($src, $loaded['scripts']))
                     $sources[] = $src;
             }
 
@@ -288,7 +287,7 @@ switch ($modx->event->name)
             $langTopics = $controller->getPlaceholder('_lang_topics');
             $langTopics = explode(',',$langTopics);
             foreach($langTopics as $topic) {
-                if (!in_array($topic, $loadedTopics))
+                if (!in_array($topic, $loaded['topics']))
                     $topics[] = $topic;
             }
             if (count($topics)){

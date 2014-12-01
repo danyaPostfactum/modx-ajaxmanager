@@ -169,7 +169,7 @@ Ext.onReady(function(){
 		log('request', url);
 
 		transaction = Ext.Ajax.request({
-			params: {'scripts[]': loaded.scripts,'stylesheets[]': loaded.styleSheets, 'topics[]': loaded.topics},
+			params: {loaded: JSON.stringify(loaded)},
 			url: url,
 			success: function(response, opts) {
 				if (!response.responseText) {
