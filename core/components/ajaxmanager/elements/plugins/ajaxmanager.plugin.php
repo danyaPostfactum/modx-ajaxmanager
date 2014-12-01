@@ -258,6 +258,7 @@ switch ($modx->event->name)
                 if (preg_match('/<script(.*?)>/', $html, $matches)){
                     if (preg_match('/src\s*=\s*(["\'])(?P<src>.*?)\1/', $matches[1], $matches)) {
                         $src = $matches['src'];
+                        $src = strtok($src, '?'); // Trim query string
                         if (in_array($src, $loadedScripts)) continue;
                         if (preg_match('/tiny_mce(_src)?.js$/', $src)) {
                             $standalone[] = $src;
@@ -268,7 +269,7 @@ switch ($modx->event->name)
                         $embedded['scripts'][] = str_replace('MODx.loadRTE();', '', $html);
                     }
                 } else if (preg_match('/<style(.*?)>/', $html)){
-                    $embedded['styles'][] = $src;
+                    $embedded['styles'][] = $html;
                 }
             }
 
