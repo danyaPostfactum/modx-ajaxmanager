@@ -192,28 +192,29 @@ $files = $preload ? array(
 switch ($modx->event->name)
 {
     case 'OnManagerPageBeforeRender':
-        
-        if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && $_SERVER['HTTP_X_REQUESTED_WITH'] == 'XMLHttpRequest' && $controller->loadHeader) {
-            $route = $modx->request->action;
-            if (intval($route) > 0) {
-                $action = $modx->actionMap[$route];
-                $namespace = $action['namespace'];
+        if ($controller->loadHeader && $controller->loadFooter) {
+            if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && $_SERVER['HTTP_X_REQUESTED_WITH'] == 'XMLHttpRequest') {
+                $route = $modx->request->action;
+                if (intval($route) > 0) {
+                    $action = $modx->actionMap[$route];
+                    $namespace = $action['namespace'];
+                } else {
+                    $namespace = $modx->request->namespace;
+                }
+                $namespaces = explode(',', $modx->getOption('ajaxmanager.compatible_namespaces', null, 'core'));
+                if ($route && !in_array($namespace, $namespaces)) {
+                    die();
+                }
+                $controller->loadHeader = false;
+                $controller->loadFooter = false;
+                $controller->packToJSON = true;
             } else {
-                $namespace = $modx->request->namespace;
+                foreach ($files as $file) {
+                        $controller->addJavaScript($managerUrl . 'assets/modext/' . $file);
+                }
+                $controller->addJavaScript($managerUrl. 'assets/components/ajaxmanager/ajaxmanager.js');
+                $controller->packToJSON = false;
             }
-            $namespaces = explode(',', $modx->getOption('ajaxmanager.compatible_namespaces', null, 'core'));
-            if ($route && !in_array($namespace, $namespaces)) {
-                die();
-            }
-            $controller->loadHeader = false;
-            $controller->loadFooter = false;
-            $controller->packToJSON = true;
-        } else {
-            foreach ($files as $file) {
-                    $controller->addJavaScript($managerUrl . 'assets/modext/' . $file);
-            }
-            $controller->addJavaScript($managerUrl. 'assets/components/ajaxmanager/ajaxmanager.js');
-            $controller->packToJSON = false;
         }
         break;
     case 'OnManagerPageAfterRender':
