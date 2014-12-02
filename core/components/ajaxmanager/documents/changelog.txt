@@ -1,5 +1,11 @@
 Changelog for AjaxManager extra.
 
+AjaxManager 1.2.0
+====================================
+- Fix issue when not all language topics loaded
+- Fix bugs with loading third-party extras js/css
+- Add Gallery component to the list of compatible components
+
 AjaxManager 1.1.9
 ====================================
 - Fix TV displaying issues
